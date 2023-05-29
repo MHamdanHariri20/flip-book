@@ -18,7 +18,7 @@
             <div class="card-body p-4">
               <h5 class="card-title fw-semibold mb-2">Flipbook Generator</h5>
               <div class="table-responsive">
-              <form action="{{ route('delete4') }}" method="POST">
+              <form id="formId" action="{{ route('delete4') }}" method="POST">
               @csrf
               @method('DELETE')
                 <table class="table text-nowrap mb-0 align-middle">
@@ -88,7 +88,7 @@
                     @endforeach
                   </tbody>
                 </table>
-              <button type="submit" class="btn btn-danger" style="float: right;"><i class="ti ti-trash fs-6"></i></button>
+              <button type="submit" class="btn btn-danger" id="delete-button" style="float: right;"><i class="ti ti-trash fs-6"></i></button>
             </form>
               </div>
             </div>

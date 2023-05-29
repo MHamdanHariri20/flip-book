@@ -75,6 +75,8 @@ Route::middleware('isLogin')->prefix('/dashboard/admin')->group(function () {
     Route::delete('/delete4', [BookflipMulti4Controller::class, 'delete4'])->name('delete4');
     Route::delete('/delete5', [BookflipMulti5Controller::class, 'delete5'])->name('delete5');
 
+    Route::post('/page/remove', [BookflipMulti2Controller::class, 'remove'])->name('page.remove');
+
     Route::get('/account', [AdminController::class, 'accountManagement'])->name('account.management');  
     Route::get('/account/edit/{id}', [AdminController::class, 'editAccount'])->name('edit.account');
     Route::patch('/account/update/{id}', [AdminController::class, 'updateAccount'])->name('update.account');

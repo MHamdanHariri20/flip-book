@@ -86,8 +86,7 @@ class BookflipMultiController extends Controller
         $selectedItems = $request->input('items');
         
         if (empty($selectedItems)) {
-            // Tampilkan alert jika tidak ada ID yang dipilih
-            echo "<script>alert('Pilih setidaknya satu item untuk dihapus.'); window.location.href = '/dashboard/admin/flipbook';</script>";
+            return redirect()->back()->with('success', 'Data berhasil dihapus.');
         } else {
             Bookflip::whereIn('id', $selectedItems)->delete();
             return redirect()->back()->with('success', 'Data berhasil dihapus.');

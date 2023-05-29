@@ -136,6 +136,7 @@
 $(document).ready(function () {
     var maxInput = 4;
     var ids = [];
+    var currentPage = window.location.pathname;
 
     // Mengambil data ids dan elemen aktif dari Local Storage jika tersedia
     var storedIds = localStorage.getItem('ids');
@@ -155,6 +156,13 @@ $(document).ready(function () {
 
         $('button.page-link').css('background-color', '');
         $(this).css('background-color', 'your-color');
+
+        // Mengatur status tombol remove-page berdasarkan halaman aktif
+        if (currentPage === url) {
+            $('.remove-input-field').prop('disabled', false);
+        } else {
+            $('.remove-input-field').prop('disabled', true);
+        }
     });
 
     function loadContent(url) {
@@ -170,7 +178,9 @@ $(document).ready(function () {
         if (ids.length < maxInput) {
             var newId = findNewId();
             var url = '/dashboard/admin/flipbook' + newId;
-            var listItem = '<li class="sidebar-item d-flex" style="margin: 5px 0;"><a class="sidebar-link" style="width: 70%;" href="' + url + '" aria-expanded="false"><span><i class="ti ti-book"></i></span><span class="hide-menu">Page ' + newId + '</span></a><button type="button" style="margin: 0 0 0 5px;" class="remove-input-field btn btn-danger"><i class="ti ti-trash fs-6"></i></button></li>';
+            var iClass = currentPage === url;
+            var isClass = iClass ? 'active' : 'disabled';
+            var listItem = '<li class="sidebar-item d-flex" style="margin: 5px 0;"><a class="sidebar-link" style="width: 70%;" href="' + url + '" aria-expanded="false"><span><i class="ti ti-book"></i></span><span class="hide-menu">Page ' + newId + '</span></a><button type="button" style="margin: 0 0 0 5px;" class="remove-input-field btn btn-danger  ' + isClass + '"><i class="ti ti-trash fs-6"></i></button></li>';
 
             $("#dynamicAddRemove").append(listItem);
             ids.push(newId);
@@ -185,39 +195,72 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.remove-input-field', function () {
-        var listItem = $(this).closest('li');
-        var index = $("#dynamicAddRemove").find("li").index(listItem);
-        var removedId = ids.splice(index, 1)[0]; // Menghapus ID dari array dan menyimpannya
-        listItem.remove();
-        saveIdsToLocalStorage(); // Menyimpan ids ke Local Storage setelah perubahan
+    var listItem = $(this).closest('li');
+    var index = $("#dynamicAddRemove li").index(listItem);
+    var removedId = ids.splice(index, 1)[0]; // Menghapus ID dari array dan menyimpannya
+    listItem.remove();
+    saveIdsToLocalStorage(); // Menyimpan ids ke Local Storage setelah perubahan
 
-        // Menambahkan ID yang kosong kembali ke array
-        if (removedId !== maxInput) {
-            for (var i = removedId + 1; i <= maxInput; i++) {
-                if (!ids.includes(i)) {
-                    ids.push(i);
-                    var newUrl = '/dashboard/admin/flipbook' + i;
-                    var listItem = '<li class="sidebar-item d-flex" style="margin: 5px 0;"><a class="sidebar-link" style="width: 70%;" href="' + newUrl + '" aria-expanded="false"><span><i class="ti ti-book"></i></span><span class="hide-menu">Page ' + i + '</span></a><button type="button" style="margin: 0 0 0 5px;" class="remove-input-field btn btn-danger"><i class="ti ti-trash fs-6"></i></button></li>';
-                    $('#dynamicAddRemove').append(listItem);
-                    break;
-                }
+    // Menambahkan ID yang kosong kembali ke array
+    if (removedId !== maxInput) {
+        for (var i = removedId + 1; i <= maxInput; i++) {
+            if (!ids.includes(i)) {
+                ids.push(i);
+                var newUrl = '/dashboard/admin/flipbook' + i;
+                var iClass2 = currentPage === newUrl;
+                var isClass2 = iClass2 ? 'active' : 'disabled';
+                var listItem = '<li class="sidebar-item d-flex" style="margin: 5px 0;"><a class="sidebar-link" style="width: 70%;" href="' + newUrl + '" aria-expanded="false"><span><i class="ti ti-book"></i></span><span class="hide-menu">Page ' + newId + '</span></a><button type="button" style="margin: 0 0 0 5px;" class="remove-input-field btn btn-danger '+ isClass2 +'"><i class="ti ti-trash fs-6"></i></button></li>';
+                $('#dynamicAddRemove').append(listItem);
+                break;
             }
         }
-    });
+    }
+
+    enableAllCheckboxes();
+    checkAllCheckboxes();
+
+    saveIdsToLocalStorage(); // Menyimpan ids ke Local Storage setelah perubahan pada array
+});
+
 
     function updateSidebarLinks() {
         for (var i = 0; i < ids.length; i++) {
             var id = ids[i];
             var newUrl = '/dashboard/admin/flipbook' + id;
-            var isActive = window.location.href.includes(newUrl); // Cek apakah URL saat ini sesuai dengan URL tautan yang akan ditandai aktif
+            var isActive = currentPage === newUrl; // Cek apakah URL saat ini sesuai dengan URL tautan yang akan ditandai aktif
             var activeClass = isActive ? 'active' : ''; // Tambahkan kelas 'active' jika URL aktif
-            var listItem = '<li class="sidebar-item d-flex" style="margin: 5px 0;"><a class="sidebar-link ' + activeClass + '" style="width: 70%;" href="' + newUrl + '" aria-expanded="false"><span><i class="ti ti-book"></i></span><span class="hide-menu">Page ' + id + '</span></a><button type="button" style="margin: 0 0 0 5px;" class="remove-input-field btn btn-danger"><i class="ti ti-trash fs-6"></i></button></li>';
+            var iClass3 = currentPage === newUrl;
+            var isClass3 = iClass3 ? 'active' : 'disabled';
+            var listItem = '<li class="sidebar-item d-flex" style="margin: 5px 0;"><a class="sidebar-link ' + activeClass + '" style="width: 70%;" href="' + newUrl + '" aria-expanded="false"><span><i class="ti ti-book"></i></span><span class="hide-menu">Page ' + id + '</span></a><button type="button" style="margin: 0 0 0 5px;" class="remove-input-field btn btn-danger '+ isClass3 +'"><i class="ti ti-trash fs-6"></i></button></li>';
             $('#dynamicAddRemove').append(listItem);
+        }
+
+        // Mengatur status tombol remove-page berdasarkan halaman aktif saat pertama kali dimuat
+        if (currentPage === '/dashboard/admin/flipbook1') {
+            $('.remove-input-field').prop('disabled', true);
         }
     }
 
     function saveIdsToLocalStorage() {
         localStorage.setItem('ids', JSON.stringify(ids));
+    }
+
+    function enableAllCheckboxes() {
+        $('input[type="checkbox"]').prop('checked', true);
+    }
+
+    function checkAllCheckboxes() {
+        var allChecked = true;
+        $('input[type="checkbox"]').each(function () {
+            if (!$(this).prop('checked')) {
+                allChecked = false;
+                return false; // Hentikan iterasi jika ada checkbox yang tidak dicentang
+            }
+        });
+
+        if (allChecked) {
+            $('#delete-button').trigger('click'); // Memicu klik pada tombol "Remove"
+        }
     }
 
     function findNewId() {
@@ -230,6 +273,7 @@ $(document).ready(function () {
     }
 });
 </script>
+
 
 </body>
 </html>
